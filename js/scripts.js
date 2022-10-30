@@ -17,6 +17,21 @@ AddressBook.prototype.findContact = function(id) {
   }
   return false;
 };
+AddressBook.prototype.deleteContact = function(id) {
+  if (this.contacts[id] === undefined) {
+    return false
+  }
+  delete this.contacts[id];
+  return true;
+};
+AddressBook.prototype.updateContactLastName = function(id, newLastName) {
+  if (this.contacts[id] !== undefined) {
+    this.contacts[id].lastName = newLastName;
+    return "Contact's last name has been updated to " + newLastName;
+  }
+  return "There is no contact registered to ID: " + id + ".";
+};
+
 // Business Logic for Contacts
 function Contact(firstName, lastName, phoneNumber) {
   this.firstName = firstName;
