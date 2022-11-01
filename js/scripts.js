@@ -24,20 +24,24 @@ AddressBook.prototype.deleteContact = function(id) {
   delete this.contacts[id];
   return true;
 };
-AddressBook.prototype.updateContactLastName = function(id, newLastName) {
-  if (this.contacts[id] !== undefined) {
-    this.contacts[id].lastName = newLastName;
-    return "Contact's last name has been updated to " + newLastName;
-  }
-  return "There is no contact registered to ID: " + id + ".";
-};
+// AddressBook.prototype.updateContactLastName = function(id, newLastName) {
+//   if (this.contacts[id] !== undefined) {
+//     this.contacts[id].lastName = newLastName;
+//     return "Contact's last name has been updated to " + newLastName;
+//   }
+//   return "There is no contact registered to ID: " + id + ".";
+// };
 
 // Business Logic for Contacts
 function Contact(firstName, lastName, phoneNumber) {
   this.firstName = firstName;
   this.lastName = lastName;
   this.phoneNumber = phoneNumber;
+  this.addressTypes = [];
+  this.addresses = [];
+  this.numAddresses = 0;
 }
+
 
 Contact.prototype.fullName = function() {
   return this.firstName + " " + this.lastName;
@@ -45,6 +49,36 @@ Contact.prototype.fullName = function() {
 
 //UI
 let addressBook = new AddressBook();
+
+function createAddressBox() {
+  numAddressBoxes++;
+  const div = document.createElement("div");
+  div.setAttribute("class", "form-group");
+  const label = document.createElement("label");
+  label.setAttribute("for", "address" + numAddressBoxes);
+  label.innerText = "Address: " + numAddressBoxes;
+  const input = document.createElement("input");
+  input.setAttribute("type", "text");
+  input.setAttribute("class", "form-control");
+  input.setAttribute("id", "address" + numAddressBoxes);
+  input.setAttribute("name", "address" + numAddressBoxes);
+  
+  const label2 = document.createElement("label");
+  label2.setAttribute("for", "addressType" + numAddressBoxes);
+  label2.innerText = "Type: " + numAddressBoxes;
+  const input2 = document.createElement("input");
+  input2.setAttribute("type", "text");
+  input2.setAttribute("class", "form-control");
+  input2.setAttribute("id", "addressType" + numAddressBoxes);
+  input2.setAttribute("name", "addressType" + numAddressBoxes);
+  
+  div.append(label2);
+  div.append(input2);
+  div.append(label);
+  div.append(input);
+  
+  document.getElementById("addressButton").before(div);
+}
 
 function listContacts(addressBookToDisplay) {
   let contactsDiv = document.querySelector("div#contacts");
@@ -66,8 +100,13 @@ function displayContactDetails(event) {
   document.querySelector(".last-name").innerText = contact.lastName;
   document.querySelector(".phone-number").innerText = contact.phoneNumber;
   document.querySelector("div#contact-details").removeAttribute("class");
-
   document.querySelector("button.delete").setAttribute("id", contact.id);
+
+  for (let i = 0; i < contact.numAddresses; i++) {
+    const p = document.createElement("p");
+    p.innerText = contact.addressTypes[i] + " Address" + " : " + contact.addresses[i];
+    document.querySelector("div#displayed-addresses").append(p);
+  }
 }
 
 function handleDelete(event) {
@@ -84,14 +123,27 @@ function handleFormSubmission(e) {
   const inputtedPhoneNumber = document.querySelector("input#new-phone-number").value;
 
   let newContact = new Contact(inputtedFirstName, inputtedLastName, inputtedPhoneNumber);
+
+    for (let i = 1; i <= numAddressBoxes; i++) {
+      const inputtedAddress = document.querySelector("input#address"+i).value;
+      const inputtedAddressType = document.querySelector("input#addressType"+i).value;
+      newContact.addresses.push(inputtedAddress);
+      newContact.addressTypes.push(inputtedAddressType);
+      newContact.numAddresses++;
+    }
+    
   addressBook.addContact(newContact);
   listContacts(addressBook);
   
   document.getElementById("new-first-name").value = null;
   document.getElementById("new-last-name").value = null;
   document.getElementById("new-phone-number").value = null;
+  document.getElementById("addressType1").value = null;
+  document.getElementById("address1").value = null;
 }
 
+let numAddressBoxes = 1;
 document.querySelector("form#new-contact").addEventListener("submit", handleFormSubmission);
 document.querySelector("div#contacts").addEventListener("click", displayContactDetails);
 document.querySelector("button.delete").addEventListener("click", handleDelete);
+document.getElementById("addressButton").addEventListener("click", createAddressBox);
