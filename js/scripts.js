@@ -43,3 +43,55 @@ Contact.prototype.fullName = function() {
   return this.firstName + " " + this.lastName;
 };
 
+//UI
+let addressBook = new AddressBook();
+
+function listContacts(addressBookToDisplay) {
+  let contactsDiv = document.querySelector("div#contacts");
+  contactsDiv.innerText = null;
+  const ul = document.createElement("ul");
+  Object.keys(addressBookToDisplay.contacts).forEach(function(key) {
+    const contact = addressBookToDisplay.findContact(key);
+    const li = document.createElement("li");
+    li.append(contact.fullName());
+    li.setAttribute("id", contact.id);
+    ul.append(li);
+  });
+  contactsDiv.append(ul);
+}
+
+function displayContactDetails(event) {
+  const contact = addressBook.findContact(event.target.id);
+  document.querySelector(".first-name").innerText = contact.firstName;
+  document.querySelector(".last-name").innerText = contact.lastName;
+  document.querySelector(".phone-number").innerText = contact.phoneNumber;
+  document.querySelector("div#contact-details").removeAttribute("class");
+
+  document.querySelector("button.delete").setAttribute("id", contact.id);
+}
+
+function handleDelete(event) {
+  addressBook.deleteContact(event.target.id);
+  document.querySelector("button.delete").removeAttribute("id");
+  document.querySelector("div#contact-details").setAttribute("class", "hidden");
+  listContacts(addressBook);
+}
+
+function handleFormSubmission(e) {
+  e.preventDefault();
+  const inputtedFirstName = document.querySelector("input#new-first-name").value;
+  const inputtedLastName = document.querySelector("input#new-last-name").value;
+  const inputtedPhoneNumber = document.querySelector("input#new-phone-number").value;
+
+  let newContact = new Contact(inputtedFirstName, inputtedLastName, inputtedPhoneNumber);
+  addressBook.addContact(newContact);
+  listContacts(addressBook);
+  
+  document.getElementById("new-first-name").value = null;
+  document.getElementById("new-last-name").value = null;
+  document.getElementById("new-phone-number").value = null;
+}
+
+document.querySelector("form#new-contact").addEventListener("submit", handleFormSubmission);
+document.querySelector("div#contacts").addEventListener("click", displayContactDetails);
+document.querySelector("button.delete").addEventListener("click", handleDelete);
