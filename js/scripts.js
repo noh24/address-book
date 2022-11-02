@@ -1,3 +1,21 @@
+//Business Logic for CSSOM : Locating stylesheets
+// function locateStyleSheet() {
+//   let indexLocation;
+//   const styleSheetArray = Array.from(document.styleSheets);
+//   styleSheetArray.forEach(function(stylesheet, index) {
+//     if (stylesheet.href) {
+//       if (stylesheet.href.includes("styles.css")) {
+//         indexLocation = index;
+//       }
+//     } 
+//   });
+//   return indexLocation;
+// }
+//const indexOfCustomStylesheet = locationStyle();
+//const customStyleSheet = document.styleSheets[indexOfCustomStylesheet]
+  //customStyleSheet.cssRules //lists css Rules
+  //customStyleSheet.insertRule("body { background-color: red; }", index); //assign inserted rule to any index;
+  //customStyleSheet.deleteRule(index); //delete the css rule assigned to index argument
 //Business Logic for Address Book
 function AddressBook() {
   this.contacts = {};
